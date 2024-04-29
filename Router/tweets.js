@@ -29,9 +29,11 @@ let tweets = [
 // Get 방식
 // http://localhost:8080/tweets?username=:username
 // .query()
+// .params()
+// .body()
 router.get('/',(req,res,next)=>{
-    const username = req.query.usernsme;
-    const data = username
+    const username = req.query.username; //http~~~ 주소를 받아오고 .query (?이후의 쿼리문)에서 username을 받아온다.
+    const data = username   // usernameㅔ
     ? tweets.filter((tweet)=>tweet.username == username)
     : tweets;
     res.status(200).json(data);
