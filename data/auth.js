@@ -2,7 +2,7 @@ let users = [
     {
         id: '1',
         userid: "apple",
-        password: "1111",
+        password: "$2b$10$th0FSiGtT2C20S8hbNMSGOHU56iqiAG6mn5vWdSUHLGqfRtRy6Kju",
         name: "김사과",
         email: "apple@apple.com",
         url: "https://www.logoyogo.com/web/wp-content/uploads/edd/2021/02/logoyogo-1-45.jpg"
@@ -31,9 +31,3 @@ export async function createUser(username, password, name, email){
 export async function login(username){
     return users.find((users) => users.username === username);
 }
-
-
-// export async function logjin(username){
-//     const user = users.find((user)=>user.username===username)
-//     return user;
-// }
