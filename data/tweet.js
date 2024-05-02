@@ -33,7 +33,7 @@ export async function getById(id){
 export async function create(text, name, username){
     const tweet = {
         id:'10',
-        text,
+        text:text,
         createdAt: Date.now().toString(),
         name: name,     // 객체를 만들 때 키값과 변수값이 같으면 text처럼 한번만 써도됨.
         username: username
