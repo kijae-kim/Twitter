@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>클라이언트</title>
+    <script src="https://cdn.socket.io/3.1.3/socket.io.min.js"
+            integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh"
+            crossorigin="anonymous">
+    </script>
+    <script>
+        const socket = io()
+
+        function setNickname(){
+            const nickname = document.getElementById('nickname').value
+            socket.emit('setNickname', nickname)
+        }
+
+        function sendMessage(){
+            const message = document.getElementById('message').value
+            socket.emit('message', message)
+        }
+
+        function addmoji(emoji){
+            const message = document.getElementById('message');
+            message.value += emoji
+        }
+
+        function setChannel(){
+            const channel = document.getElementById('channel').value;
+            socket.emit('setChannel', channel);
+        }
+        // 메세지 수신 이벤트 처리₩
+        socket.on('setNickname', (message) => {
+            const chatBox = document.getElementById('chatBox')
+            const newMessage = document.createElement('p')
+            newMessage.textContent = message
+            chatBox.appendChild(newMessage)
+        })
+
+        socket.on('message', (message) => {
+            console.log(message)
+            const chatBox = document.getElementById('chatBox')
+            const newMessage = document.createElement('p')
+            newMessage.textContent = `${message.sender}: ${message.message}`
+            chatBox.appendChild(newMessage)
+            document.getElementById('message').value = ''
+        })
+
+        socket.on('updateChannelList', (channelList)=>{
+            const channelListElement = document.getElementById('channelList');
+            channelListElement.innerHTML = '';
+            channelList.forEach((channel)=>{
+                const channelItem = document.createElement('li');
+                channelItem.textContent = channel;
+                channelListElement.appendChild(channelItem);
+            })
+        })
+    </script>
+</head>
+<body>
+    <h2>간단한 채팅</h2>
+    <form>
+        <p>닉네임: <input type="text" id="nickname"><button type="button" onclick="setNickname()">설정</button></p>
+        <p>채널 : <input type="text" id="channel"><button onclick="setChannel()">입장</button></p>
+        <p><ul id="channelList"></ul></p>
+        <p><input type="text" id="message"> <button type="button" onclick="sendMessage()">보내기</button>
+            <button type="button" onclick="addmoji(':🐶:')">:🐶:</button>
+            <button type="button" onclick="addmoji(':🐱:')">:🐱:</button>
+            <button type="button" onclick="addmoji(':🐭:')">:🐭:</button>
+            <button type="button" onclick="addmoji('🐹')">:🐹:</button>
+            <button type="button" onclick="addmoji(':🐰:')">:🐰:</button>
+            <button type="button" onclick="addmoji(':🦊:')">:🦊:</button></p>
+    </form>
+    <div id="chatBox"></div>
+</body>
+</html>

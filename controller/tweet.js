@@ -21,7 +21,7 @@ export async function getTweet(req, res, next){
 
 // 트윗을 생성하는 함수
 export async function creatTweet(req, res, next){
-    const {text,name,username} = req.body;
+    const {text} = req.body;
     const tweet = await tweetRepository.create(text,name,username);
     res.status(201).json(tweet);
 }
