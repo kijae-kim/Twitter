@@ -1,53 +1,82 @@
-import SQ from 'sequelize';
-import { sequelize } from '../DB/database.js';
-const DataTypes = SQ.DataTypes;
+import MongoDB from 'mongodb';
+import { getUsers } from '../DB/database.js';
+
+const ObjectID = MongoDB.ObjectId;
+/*데이터 저장시 DJON으로 저장
+    {'ObjectID': 3209ua124,'userid':'apple','name':'김사과'...}
+    {'userid':'apple','name':'김사과'...}  중복데이터를 구분할 수 없음.
+                                        그래서 ObjectID가 생성됨. 유니크적용
+    {'userid':'banana','name':'반하나'...}
+*/
+//아이디 중복 검사
+export async function findByUsername(username){
+    return getUsers().find({username}).next().then(mapOptionalUser);   //함수형 프로그래밍
+}
+
+//id중복검사
+export async function findById(id){
+    return getUsers().find({_id: new ObjectID(id)}).next().then(mapOptionalUser);
+}
+
+//
+export async function createUser(user){
+    return getUsers().insertOne(user).then((result)=>{
+        console.log(result.insertedId.toString())
+    })
+}
+
+// const DataTypes = SQ.DataTypes;
 // sequelize에서 사용하는 모든 데이터 형(INT,STRING ...)을 저장하고 생성하게끔 만들어줌.
 
 //tweets User  쿼리 문을 안쓰기 위해서 바로 컬럼을 만들어준다.
-export const User = sequelize.define(
-    'user',
-    {
-        id:{
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            allowNull: false,
-            primaryKey: true
-        },
-        username:{
-            type: DataTypes.STRING(50),
-            allowNull: false
-        },
-        password:{
-            type: DataTypes.STRING(150),
-            allowNull: false
-        },
-        name: {
-            type: DataTypes.STRING(50),
-            allowNull: false
-        },
-        email:{
-            type: DataTypes.STRING(50),
-            allowNull: false
-        },
-        url: DataTypes.STRING(1000)
-    },
-    { timestamps: false }   //시간값을 넣게 되어있음.
-);
-// 외부에서 User라는 사용자 틀을 가져다가 사용할 수 있게끔 만들어줌.
+// export const User = sequelize.define(
+//     'user',
+//     {
+//         id:{
+//             type: DataTypes.INTEGER,
+//             autoIncrement: true,
+//             allowNull: false,
+//             primaryKey: true
+//         },
+//         username:{
+//             type: DataTypes.STRING(50),
+//             allowNull: false
+//         },
+//         password:{
+//             type: DataTypes.STRING(150),
+//             allowNull: false
+//         },
+//         name: {
+//             type: DataTypes.STRING(50),
+//             allowNull: false
+//         },
+//         email:{
+//             type: DataTypes.STRING(50),
+//             allowNull: false
+//         },
+//         url: DataTypes.STRING(1000)
+//     },
+//     { timestamps: false }   //시간값을 넣게 되어있음.
+// );
+// // 외부에서 User라는 사용자 틀을 가져다가 사용할 수 있게끔 만들어줌.
 
-// 아이디(username) 중복검사
-export async function findByUsername(username){
-    return User.findOne({where: {username}});
-    //{where: {조건}}
-}
-// id 중복검사
-export async function findById(id){
-    return User.findByPk(id);
-}
-export async function createUser(user){
-    return User.create(user).then((data)=>data.dataValues.id)
-}
-// export async function login(username){
-//     const user = users.find((user) => user.username === username)
-//     return user;
+// // 아이디(username) 중복검사
+// export async function findByUsername(username){
+//     return User.findOne({where: {username}});
+//     //{where: {조건}}
 // }
+// // id 중복검사
+// export async function findById(id){
+//     return User.findByPk(id);
+// }
+// export async function createUser(user){
+//     return User.create(user).then((data)=>data.dataValues.id)
+// }
+// // export async function login(username){
+// //     const user = users.find((user) => user.username === username)
+// //     return user;
+// // }
+
+function mapOptionalUser(user){
+    return user ? { ...user, id: user._id.toString() } : user;
+}
