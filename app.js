@@ -3,8 +3,7 @@ import morgan from "morgan";
 import tweetsRouter from './Router/tweets.js';
 import authRouter from './Router/auth.js';
 import { config } from "./config.js";
-import { db } from "./DB/database.js";
-
+import { sequelize } from "./DB/database.js";
 
 const app = express();
 
@@ -20,5 +19,8 @@ app.use((req,res, next)=>{
     res.sendStatus(404);
 });
 
-db.getConnection().then(connection=>console.log(connection));
-app.listen(config.host.port);
+// DB 연결 테스트!
+sequelize.sync().then(()=>{
+    app.listen(donfig.host.port);
+});
+
