@@ -1,8 +1,21 @@
-import MongoDB from 'mongodb';
-import { getUsers } from '../DB/database.js';
+import Mongoose from 'mongoose';
+import { useVirtualId } from '../DB/database.js';
 
+const userSchema = new Mongoose.Schema({
+    username: {type: String, require: true},
+    name: {type: String, require: true},
+    email: {type: String, require: true},
+    password: {type: String, require: true},
+    url: String
+});
+
+useVirtualId(userSchema);
+
+const User = Mongoose.model('User', userSchema);
+
+/*
 const ObjectID = MongoDB.ObjectId;
-/*데이터 저장시 DJON으로 저장
+데이터 저장시 DJON으로 저장
     {'ObjectID': 3209ua124,'userid':'apple','name':'김사과'...}
     {'userid':'apple','name':'김사과'...}  중복데이터를 구분할 수 없음.
                                         그래서 ObjectID가 생성됨. 유니크적용
@@ -10,19 +23,17 @@ const ObjectID = MongoDB.ObjectId;
 */
 //아이디 중복 검사
 export async function findByUsername(username){
-    return getUsers().find({username}).next().then(mapOptionalUser);   //함수형 프로그래밍
+    return User.findOne({username});
 }
 
 //id중복검사
 export async function findById(id){
-    return getUsers().find({_id: new ObjectID(id)}).next().then(mapOptionalUser);
+    return User.findById(id);
 }
 
 //
 export async function createUser(user){
-    return getUsers().insertOne(user).then((result)=>{
-        console.log(result.insertedId.toString())
-    })
+    return new User(user).save().then((data)=> data.id);
 }
 
 // const DataTypes = SQ.DataTypes;

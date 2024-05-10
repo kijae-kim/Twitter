@@ -22,7 +22,7 @@ app.use((req,res, next)=>{
 
 // DB 연결 테스트!
 connectDB().then((db)=>{
-    console.log('MongoDB Connetction Success')
+    console.log('Using Mongoose in MongoDB Connetction Success')
     app.listen(config.host.port);
 }).catch(console.error);
 

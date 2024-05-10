@@ -1,11 +1,21 @@
 
 import { config } from '../config.js';
-import MongoDb from 'mongodb';
+import Mongoose from 'mongoose';
 
-let db;
+
 export async function connectDB(){
-    return MongoDb.MongoClient.connect(config.db.host).then((client)=> db = client.db());
+    return Mongoose.connect(config.db.host);
 }
+export function useVirtualId(schema){
+    schema.virtual('id').get(function(){
+        return this._id.toString();
+    });
+    schema.set('toJSN', {virtuals:true}); //통신
+    schema.set('toObject', {virtuals:true});    //객체 사용
+}
+// mongoose를 사용하는 이유는 스키마를 생성할 수 있다는 이유.
+// MongoDB에 스키마적용이 가능.
+let db;
 //  ODM??
 export function getUsers(){
     return db.collection('users');  //데이터를 collection users에 넣겠다.
