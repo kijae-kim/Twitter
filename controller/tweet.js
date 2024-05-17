@@ -1,4 +1,5 @@
 import * as tweetRepository from '../data/tweet.js';
+import { getSocketIo } from '../connection/socket.js';
 
 //모든 트윕을 가져오는 함수
 export async function getTweets(req,res){
@@ -24,7 +25,9 @@ export async function creatTweet(req, res, next){
     const {text} = req.body;
     const tweet = await tweetRepository.create(text,name,username);
     res.status(201).json(tweet);
+    getSocketIo().emit('tweets',tweet);
 }
+
 // 트윗을 변경하는 함수
 export async function updateTweet(req, res, next){
     const id = req.params.id;

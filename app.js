@@ -5,6 +5,7 @@ import authRouter from './Router/auth.js';
 import { config } from "./config.js";
 // import { sequelize } from "./DB/database.js";
 import { connectDB } from "./DB/database.js";
+import {initSocket} from "./connection/socket.js";
 
 const app = express();
 
@@ -20,10 +21,9 @@ app.use((req,res, next)=>{
     res.sendStatus(404);
 });
 
-// DB 연결 테스트!
 connectDB().then((db)=>{
-    console.log('Using Mongoose in MongoDB Connetction Success')
-    app.listen(config.host.port);
+    const server = app.listen(config.host.port);
+    initSocket(server);
 }).catch(console.error);
 
 // sequelize.sync().then(()=>{
